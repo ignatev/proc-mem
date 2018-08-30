@@ -1,14 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
-	 "os"
-	 "strconv"
-	// "syscall"
 	"fmt"
 	"log"
+	"os"
 	"regexp"
-	"bufio"
+	"strconv"
 	"time"
 )
 
@@ -18,13 +17,9 @@ func main() {
 
 }
 
-var (
-	procRoot = "/proc"
-)
-
 type proc struct {
-	pid uint
-	mem uint64
+	pid  uint
+	mem  uint64
 	name string
 }
 
@@ -68,7 +63,6 @@ func parseShared(lines string) {
 	fmt.Println(matches)
 }
 
-
 func scanFile(filename string) error {
 	begin := time.Now()
 
@@ -96,23 +90,20 @@ func scanFile(filename string) error {
 	return nil
 }
 
-
-
 func procname(pid string) {
 	filename := "/proc/" + pid + "/comm"
 	f, err := os.Open(filename)
-	if err != nil{
-     log.Fatal(err)
-   }
-   defer f.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
 
-   buf := new(bytes.Buffer)
-   buf.ReadFrom(f)
-   contents := buf.String()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(f)
+	contents := buf.String()
 
-   fmt.Print(pid, " ", contents)
+	fmt.Print(pid, " ", contents)
 }
-
 
 func procmem(pid string) {
 	filename := "/proc/" + pid + "/smaps"
@@ -123,7 +114,7 @@ func procmem(pid string) {
 	defer f.Close()
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(f)
-//	contents := buf.String()
+	//	contents := buf.String()
 	scanFile(filename)
 	//fmt.Print(contents)
 }
