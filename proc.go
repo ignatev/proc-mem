@@ -32,8 +32,7 @@ func parseMem(line, pattern string) string {
 	re := regexp.MustCompile(pattern)
 	res := re.FindStringSubmatch(line)
 	if len(res) != 0 {
-		result = re.FindStringSubmatch(line)[0]
-		fmt.Println(result)
+		result = re.FindStringSubmatch(line)[1]
 	}
 	return result
 }
@@ -59,7 +58,6 @@ func procVmRSS(pid string) proc {
 	}
 
 	res.pid = pid
-	fmt.Println(res)
 	return res
 }
 
@@ -82,10 +80,13 @@ func procPid() map[uint64]proc {
 		if err != nil {
 			continue
 		} else {
-			res[uintpid] = procVmRSS(pid)
+			process := procVmRSS(pid)
+			if len(process.mem) != 0 {
+				res[uintpid] = process
+			}
 		}
 	}
-
+	fmt.Println(res)
 	return res
 
 }
