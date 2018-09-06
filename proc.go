@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	 "os"
 	 "strconv"
 	// "syscall"
@@ -9,7 +8,6 @@ import (
 	"log"
 	"regexp"
 	"bufio"
-	"time"
 )
 
 func main() {
@@ -65,23 +63,9 @@ func procVmRSS(pid string) proc {
 	return res
 }
 
-func procmem(pid string) {
-	filename := "/proc/" + pid + "/smaps"
-	f, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(f)
-//	contents := buf.String()
-	scanFile(filename)
-	//fmt.Print(contents)
-}
+func procPid() map[uint64]proc {
 
-func procPid() map[uint]proc {
-
-	res := make(map[uint]proc)
+	res := make(map[uint64]proc)
 	pidDir, err := os.Open("/proc")
 	if err != nil {
 		fmt.Println("cannot open proc dir")
@@ -94,82 +78,17 @@ func procPid() map[uint]proc {
 	}
 
 	for _, pid := range pids {
-		_, err := strconv.ParseUint(pid, 10, 0)
+		uintpid, err := strconv.ParseUint(pid, 10, 0)
 		if err != nil {
 			continue
 		} else {
-
-			procname(pid)
+			res[uintpid] = procVmRSS(pid)
 		}
 	}
 
-	procmem(pids[58])
 	return res
 
 }
-
-func parseShared(lines string) {
-	re, err := regexp.Compile("^Shared.+")
-	if err != nil {
-		log.Println(err)
-	}
-
-	matches := re.FindAllString(lines, -1)
-	//fmt.Print(lines)
-	fmt.Println(matches)
-}
-
-
-
-
-func scanFile(filename string) error {
-	begin := time.Now()
-
-	total := 0 // count lines
-
-	f, err := os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
-	if err != nil {
-		log.Fatalf("open file error: %v", err)
-		return err
-	}
-	defer f.Close()
-
-	sc := bufio.NewScanner(f)
-	for sc.Scan() {
-		parseMem(sc.Text(), "Shared")
-		parseMem(sc.Text(), "Private")
-		parseMem(sc.Text(), "Swap:")
-		parseMem(sc.Text(), "SwapPss:")
-		parseMem(sc.Text(), "Pss")
-		total++
-	}
-	if err := sc.Err(); err != nil {
-		log.Fatalf("scan file error: %v", err)
-		return err
-	}
-
-	log.Printf("scan file, time_used: %v, lines=%v\n", time.Since(begin).Seconds(), total)
-
-	return nil
-}
-
-
-
-func procname(pid string) {
-	filename := "/proc/" + pid + "/comm"
-	f, err := os.Open(filename)
-	if err != nil{
-     log.Fatal(err)
-   }
-   defer f.Close()
-
-   buf := new(bytes.Buffer)
-   buf.ReadFrom(f)
-   contents := buf.String()
-
-   fmt.Print(pid, " ", contents)
-}
-
 
 
 
