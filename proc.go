@@ -15,12 +15,8 @@ import (
 func main() {
 	fmt.Println("collect memory per process")
 	procPid()
-
 }
 
-var (
-	procRoot = "/proc"
-)
 
 func check(err error) {
 	if err != nil {
@@ -34,7 +30,7 @@ type proc struct {
 
 func parseMem(line, pattern string) string {
 	result := ""
-	pattern = "^" + pattern + ".+\\s+(\\d+).+"
+	pattern = "^" + pattern + "\\s+(.+)"
 	re := regexp.MustCompile(pattern)
 	res := re.FindStringSubmatch(line)
 	if len(res) != 0 {
@@ -54,14 +50,19 @@ func procVmRSS(pid string) proc {
 
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		parseMem(sc.Text(), "Shared")
-		parseMem(sc.Text(), "Private")
-		parseMem(sc.Text(), "Swap:")
-		parseMem(sc.Text(), "SwapPss:")
-		parseMem(sc.Text(), "Pss")
+		name := parseMem(sc.Text(), "Name:")
+		if len(name) != 0 {
+			res.name = name
+		}
+		mem := parseMem(sc.Text(), "VmRSS:")
+		if len(mem) != 0 {
+			res.mem = mem
+		}
 	}
 
-
+	res.pid = pid
+	fmt.Println(res)
+	return res
 }
 
 func procmem(pid string) {
