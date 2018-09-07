@@ -11,7 +11,6 @@ import (
 
 func main() {
 	fmt.Println("collect memory per process")
-//	procPid()
 	meminfo()
 }
 
@@ -25,12 +24,12 @@ type proc struct {
 	pid, mem, name string
 }
 
-func parseMem(line, pattern string) string {	//
-	result := ""								//	extracting only name and memory size
-	pattern = "^" + pattern + "\\s+(\\S+)"		//	from strings:
-	re := regexp.MustCompile(pattern)			//
-	res := re.FindStringSubmatch(line)			//	`Name: 	Telegram` -> Telegram
-	if len(res) != 0 {							//	`VmRSS:	18888234 kB` -> 18888234
+func parse(line, pattern string) string { 	//
+	result := ""                           		//	extracting only name and memory size
+	pattern = "^" + pattern + "\\s+(\\S+)" 		//	from strings:
+	re := regexp.MustCompile(pattern)      		//
+	res := re.FindStringSubmatch(line)     		//	`Name: 	Telegram` -> Telegram
+	if len(res) != 0 {                     		//	`VmRSS:	18888234 kB` -> 18888234
 		result = re.FindStringSubmatch(line)[1] //
 	}
 	return result
@@ -46,11 +45,11 @@ func vmrss(pid string) proc {
 
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		name := parseMem(sc.Text(), "Name:")
+		name := parse(sc.Text(), "Name:")
 		if len(name) != 0 {
 			res.name = name
 		}
-		mem := parseMem(sc.Text(), "VmRSS:")
+		mem := parse(sc.Text(), "VmRSS:")
 		if len(mem) != 0 {
 			res.mem = mem
 		}
@@ -62,7 +61,7 @@ func vmrss(pid string) proc {
 
 type total struct {
 	total, free string
-	percentage float64
+	percentage  float64
 }
 
 func meminfo() total {
@@ -75,11 +74,11 @@ func meminfo() total {
 
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
-		total := parseMem(sc.Text(), "MemTotal:")
+		total := parse(sc.Text(), "MemTotal:")
 		if len(total) != 0 {
 			result.total = total
 		}
-		free := parseMem(sc.Text(), "MemAvailable:")
+		free := parse(sc.Text(), "MemAvailable:")
 		if len(free) != 0 {
 			result.free = free
 		}
@@ -91,23 +90,18 @@ func meminfo() total {
 
 	result.percentage = freef / totalf * 100
 
-	fmt.Println(result)
 	return result
 }
 
 func procPid() map[uint64]proc {
-
 	res := make(map[uint64]proc)
+
 	pidDir, err := os.Open("/proc")
-	if err != nil {
-		fmt.Println("cannot open proc dir")
-	}
+	check(err)
 
 	pids, err := pidDir.Readdirnames(-1)
 	pidDir.Close()
-	if err != nil {
-		fmt.Println("error reading pids")
-	}
+	check(err)
 
 	for _, pid := range pids {
 		uintpid, err := strconv.ParseUint(pid, 10, 0)
