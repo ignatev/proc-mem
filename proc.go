@@ -2,17 +2,11 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
 	"strconv"
 )
-
-func main() {
-	fmt.Println("collect memory per process")
-	meminfo()
-}
 
 func check(err error) {
 	if err != nil {
@@ -24,12 +18,12 @@ type proc struct {
 	pid, mem, name string
 }
 
-func parse(line, pattern string) string { 	//
-	result := ""                           		//	extracting only name and memory size
-	pattern = "^" + pattern + "\\s+(\\S+)" 		//	from strings:
-	re := regexp.MustCompile(pattern)      		//
-	res := re.FindStringSubmatch(line)     		//	`Name: 	Telegram` -> Telegram
-	if len(res) != 0 {                     		//	`VmRSS:	18888234 kB` -> 18888234
+func parse(line, pattern string) string {	//
+	result := ""//	extracting only name and memory size
+	pattern = "^" + pattern + "\\s+(\\S+)" //	from strings:
+	re := regexp.MustCompile(pattern)      //
+	res := re.FindStringSubmatch(line)     //	`Name: 	Telegram` -> Telegram
+	if len(res) != 0 {                     //	`VmRSS:	18888234 kB` -> 18888234
 		result = re.FindStringSubmatch(line)[1] //
 	}
 	return result
@@ -93,7 +87,7 @@ func meminfo() total {
 	return result
 }
 
-func procPid() map[uint64]proc {
+func perproc() map[uint64]proc {
 	res := make(map[uint64]proc)
 
 	pidDir, err := os.Open("/proc")
@@ -111,7 +105,6 @@ func procPid() map[uint64]proc {
 			process := vmrss(pid)
 			if len(process.mem) != 0 {
 				res[uintpid] = process
-				fmt.Println(process)
 			}
 		}
 	}
