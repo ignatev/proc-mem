@@ -18,12 +18,12 @@ type proc struct {
 	pid, mem, name string
 }
 
-func parse(line, pattern string) string { 		//
-	result := ""                           		//	extracting only name and memory size
-	pattern = "^" + pattern + "\\s+(\\S+)" 		//	from strings:
-	re := regexp.MustCompile(pattern)      		//
-	res := re.FindStringSubmatch(line)     		//	`Name: 	Telegram` -> Telegram
-	if len(res) != 0 {                     		//	`VmRSS:	18888234 kB` -> 18888234
+func parse(line, pattern string) string { //
+	result := ""                           //	extracting only name and memory size
+	pattern = "^" + pattern + "\\s+(\\S+)" //	from strings:
+	re := regexp.MustCompile(pattern)      //
+	res := re.FindStringSubmatch(line)     //	`Name: 	Telegram` -> Telegram
+	if len(res) != 0 {                     //	`VmRSS:	18888234 kB` -> 18888234
 		result = re.FindStringSubmatch(line)[1] //
 	}
 	return result

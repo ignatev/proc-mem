@@ -1,15 +1,14 @@
 package main
 
 import (
-	"os"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 var hostname, _ = os.Hostname()
-
 
 func main() {
 	http.HandleFunc("/metrics", handler)
@@ -36,8 +35,8 @@ func pidlines(pids map[uint64]proc) string {
 }
 
 func totalmem(mem total) string {
-	totalMem := "total_memory{hostname=\"" + hostname +"\"} " + mem.total + "\n"
-	freeMem := "free_memory{hostname=\"" + hostname +"\"} "+ mem.free + "\n"
-	perc := "free_percentage{hostname=\"" + hostname +"\"} " + fmt.Sprintf("%.0f", mem.percentage) + "\n"
+	totalMem := "total_memory{hostname=\"" + hostname + "\"} " + mem.total + "\n"
+	freeMem := "free_memory{hostname=\"" + hostname + "\"} " + mem.free + "\n"
+	perc := "free_percentage{hostname=\"" + hostname + "\"} " + fmt.Sprintf("%.0f", mem.percentage) + "\n"
 	return totalMem + freeMem + perc
 }

@@ -1,15 +1,15 @@
 package main
 
 import (
-	"net/http"
-	"io/ioutil"
-	"strings"
 	"gopkg.in/alexcesaro/statsd.v2"
+	"io/ioutil"
+	"net/http"
 	"strconv"
+	"strings"
 )
 
 type metric struct {
-	name string
+	name  string
 	value int
 }
 
@@ -43,5 +43,5 @@ func send(m metric) {
 }
 
 func collectParallel() {
-	
+
 }
