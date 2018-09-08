@@ -22,7 +22,7 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_firewall" "default" {
-  name    = "chef-demo-firewall"
+  name    = "demo-firewall"
   network = "${google_compute_network.default.name}"
 
   allow {

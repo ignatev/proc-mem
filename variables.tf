@@ -11,18 +11,18 @@ variable "network_cidr" {
 }
 
 variable "network_name" {
-  default = "chef-managed-net"
+  default = "demo-managed-net"
 }
 
 
 variable "name" {
   description = "Name prefix for the nodes"
-  default     = "chef-managed"
+  default     = "proc-demo"
 }
 
 variable "num_nodes" {
   description = "Number of nodes to create"
-  default     = 2
+  default     = 30
 }
 
 variable "image_family" {
@@ -45,7 +45,7 @@ variable "disk_type" {
 
 variable "disk_size_gb" {
   description = "The size of the image in gigabytes."
-  default     = 30
+  default     = 15
 }
 
 variable "network_ip" {
@@ -66,7 +66,7 @@ variable "gcp_service_account" {
 }
 
 variable "gcp_ssh_user" {
-    default = "chef-demo"
+    default = "proc-demo"
 }
 
 variable "gcp_ssh_pub_key_file" {
@@ -74,5 +74,5 @@ variable "gcp_ssh_pub_key_file" {
 }
 
 variable "gcp_project_id" {
-    default = "eternal-ship-213716"
+    default = ""
 }
