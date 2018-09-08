@@ -13,12 +13,17 @@ var hostname, _ = os.Hostname()
 
 func main() {
 	http.HandleFunc("/metrics", handler)
+	http.HandleFunc("/statsd", getStats)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	perproclines := pidlines(perproc()) + totalmem(meminfo())
 	io.WriteString(w, perproclines)
+}
+
+func getStats(w http.ResponseWriter, r *http.Request) {
+	collect("http://localhost:8080/metrics")
 }
 
 func pidlines(pids map[uint64]proc) string {
@@ -33,6 +38,6 @@ func pidlines(pids map[uint64]proc) string {
 func totalmem(mem total) string {
 	totalMem := "total_memory{hostname=\"" + hostname +"\"} " + mem.total + "\n"
 	freeMem := "free_memory{hostname=\"" + hostname +"\"} "+ mem.free + "\n"
-	perc := "free_percentage{hostname=\"" + hostname +"\"} " + fmt.Sprintf("%.2f", mem.percentage) + "\n"
+	perc := "free_percentage{hostname=\"" + hostname +"\"} " + fmt.Sprintf("%.0f", mem.percentage) + "\n"
 	return totalMem + freeMem + perc
 }
