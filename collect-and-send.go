@@ -6,7 +6,6 @@ import (
 	"strings"
 	"gopkg.in/alexcesaro/statsd.v2"
 	"strconv"
-	"fmt"
 )
 
 type metric struct {
@@ -41,4 +40,8 @@ func send(m metric) {
 	defer c.Close()
 	c.Gauge(m.name, m.value)
 	c.Flush()
+}
+
+func collectParallel() {
+	
 }
