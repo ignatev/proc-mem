@@ -44,9 +44,9 @@ func send(m metric) {
 	c.Flush()
 }
 
-func collectParallel() {
+func collectParallel(hostname string) {
 	for range time.Tick(time.Second * 3) {
-		fmt.Println("sending metrics...")
-		collect("http://localhost:8080/metrics")
+		fmt.Println("collect metrics from " + hostname)
+		collect("http://" + hostname + ":8080/metrics")
 	}
 }
