@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
+	"fmt"
 )
 
 type metric struct {
@@ -43,5 +45,8 @@ func send(m metric) {
 }
 
 func collectParallel() {
-
+	for range time.Tick(time.Second * 15) {
+		fmt.Println("sending metrics...")
+		collect("http://localhost:8080/metrics")
+	}
 }

@@ -13,6 +13,7 @@ var hostname, _ = os.Hostname()
 func main() {
 	http.HandleFunc("/metrics", handler)
 	http.HandleFunc("/statsd", getStats)
+	go collectParallel()
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
