@@ -8,11 +8,44 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"os"
+	"log"
+	"bufio"
 )
 
 type metric struct {
 	name  string
 	value int
+}
+
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func main() {
+	hosts := inventory("hosts")
+	for _, host := range hosts {
+		go collectParallel(host)
+	}
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func inventory(path string) []string {
+	var res []string
+	if _, err := os.Stat(path); err == nil {
+		f, err := os.Open(path)
+		check(err)
+		defer f.Close()
+
+		sc := bufio.NewScanner(f)
+		for sc.Scan() {
+			res = append(res, sc.Text())
+		}
+	}
+
+	return res
 }
 
 func collect(hostname string) []metric {
@@ -46,7 +79,7 @@ func send(m metric) {
 
 func collectParallel(hostname string) {
 	for range time.Tick(time.Second * 3) {
-		fmt.Println("collect metrics from " + hostname)
+		fmt.Println("scraping metrics from " + hostname)
 		collect("http://" + hostname + ":8080/metrics")
 	}
 }

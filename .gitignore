@@ -3,3 +3,5 @@ gcp-key
 gcp-key.pub
 creds
 gcp-key.json
+collect/collect
+expose/expose
