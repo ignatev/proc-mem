@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"gopkg.in/alexcesaro/statsd.v2"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"fmt"
 )
 
 type metric struct {
@@ -45,7 +45,7 @@ func send(m metric) {
 }
 
 func collectParallel() {
-	for range time.Tick(time.Second * 15) {
+	for range time.Tick(time.Second * 3) {
 		fmt.Println("sending metrics...")
 		collect("http://localhost:8080/metrics")
 	}

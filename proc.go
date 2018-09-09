@@ -33,23 +33,26 @@ func vmrss(pid string) proc {
 	res := proc{}
 
 	procstatus := "/proc/" + pid + "/status"
-	f, err := os.Open(procstatus)
-	check(err)
-	defer f.Close()
+	if _, err := os.Stat(procstatus); err == nil {
+		f, err := os.Open(procstatus)
 
-	sc := bufio.NewScanner(f)
-	for sc.Scan() {
-		name := parse(sc.Text(), "Name:")
-		if len(name) != 0 {
-			res.name = name
+		check(err)
+		defer f.Close()
+
+		sc := bufio.NewScanner(f)
+		for sc.Scan() {
+			name := parse(sc.Text(), "Name:")
+			if len(name) != 0 {
+				res.name = name
+			}
+			mem := parse(sc.Text(), "VmRSS:")
+			if len(mem) != 0 {
+				res.mem = mem
+			}
 		}
-		mem := parse(sc.Text(), "VmRSS:")
-		if len(mem) != 0 {
-			res.mem = mem
-		}
+		res.pid = pid
 	}
 
-	res.pid = pid
 	return res
 }
 

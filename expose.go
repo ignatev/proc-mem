@@ -12,7 +12,6 @@ var hostname, _ = os.Hostname()
 
 func main() {
 	http.HandleFunc("/metrics", handler)
-	http.HandleFunc("/statsd", getStats)
 	go collectParallel()
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
@@ -20,10 +19,6 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	perproclines := pidlines(perproc()) + totalmem(meminfo())
 	io.WriteString(w, perproclines)
-}
-
-func getStats(w http.ResponseWriter, r *http.Request) {
-	collect("http://localhost:8080/metrics")
 }
 
 func pidlines(pids map[uint64]proc) string {
