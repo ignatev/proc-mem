@@ -1,16 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"gopkg.in/alexcesaro/statsd.v2"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
-	"os"
-	"log"
-	"bufio"
 )
 
 type metric struct {
@@ -29,7 +29,12 @@ func main() {
 	for _, host := range hosts {
 		go collectParallel(host)
 	}
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	http.HandleFunc("/", handler)
+	log.Fatal(http.ListenAndServe(":8081", nil))
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "hosts")
 }
 
 func inventory(path string) []string {
