@@ -10,7 +10,7 @@ There are free memory metric, free memory percentage metric and per-proc consump
 
 ## Collect
 
-This script reads hostname lists from plain-text file and starts scraping metrics for each host.
+This script reads hostname list from plain-text file and starts scraping metrics for each host.
 Collected metrics are send to the statsd server.
 
 ## Demo
