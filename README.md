@@ -4,7 +4,7 @@ Application connsists of two parts: collect and expose.
 
 ## Expose
 
-This script reads name and vmrss values from /proc/<pid>/status, stores them in a map.
+This script reads name and vmrss values from ``/proc/<pid>/status``, stores them in a map.
 Gathered information exposed using web-server on 8080 port in Prometheus format (tagged by process name and hostname)
 There are free memory metric, free memory percentage metric and per-proc consumption metrics.
 
